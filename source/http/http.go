@@ -14,9 +14,12 @@ import (
 	"github.com/deuill/farsight/source"
 )
 
-type HTTP struct{}
+// HTTPSource represents a source for HTTP and HTTPS endpoints.
+type HTTPSource struct{}
 
-func (h *HTTP) Fetch(src string) (io.Reader, error) {
+// Fetch issues a GET request against the source URL pointed to by `src`, and
+// returns an io.Reader for the containing HTML document.
+func (h *HTTPSource) Fetch(src string) (io.Reader, error) {
 	// Attempt to fetch resource from source endpoint.
 	resp, err := http.Get(src)
 	if err != nil {
@@ -37,7 +40,7 @@ func (h *HTTP) Fetch(src string) (io.Reader, error) {
 }
 
 func init() {
-	h := &HTTP{}
+	h := &HTTPSource{}
 
 	// Register HTTP source for both "http" and "https" endpoints.
 	source.Register("http", h)

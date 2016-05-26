@@ -16,6 +16,7 @@ type Parser interface {
 
 type Document interface {
 	Filter(attr string) (Document, error)
+	List() []Document
 	String() string
 }
 

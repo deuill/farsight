@@ -19,7 +19,8 @@ import (
 )
 
 // Fetch data from source pointed to by URI in `src`, and store to arbitrary
-// struct pointed to by `dest`.
+// struct pointed to by `dest`. Data is parsed according to `kind`, and has to
+// correspond to a registered parser.
 func Fetch(src string, dest interface{}, kind string) error {
 	// Verify destination value type.
 	val := reflect.ValueOf(dest)
@@ -48,7 +49,8 @@ func Fetch(src string, dest interface{}, kind string) error {
 	return nil
 }
 
-// Set struct fields sequentially according to their `farsight` tags.
+// Set struct fields from document, filtered by tags marked by "farsight"
+// definitions.
 func populateStruct(doc parser.Document, dest reflect.Value) error {
 	// Set each struct field in sequence.
 	for i := 0; i < dest.NumField(); i++ {
@@ -84,6 +86,18 @@ func setField(doc parser.Document, field reflect.Value) error {
 	switch field.Kind() {
 	case reflect.String:
 		field.SetString(val)
+	case reflect.Slice:
+		// Decompose document into list and prepare destination slice.
+		list := doc.List()
+		slice := reflect.MakeSlice(field.Type(), len(list), cap(list))
+
+		for i, d := range list {
+			if err := setField(d, slice.Index(i)); err != nil {
+				return nil
+			}
+		}
+
+		field.Set(slice)
 	case reflect.Struct:
 		return populateStruct(doc, field)
 	default:

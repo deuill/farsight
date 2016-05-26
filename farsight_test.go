@@ -34,17 +34,28 @@ type TestCase struct {
 	Expected interface{}
 }
 
+// Test cases for `farsight.Fetch` function.
 var fetchTests = map[string]TestCase{
-	// Fetch and set ID attribute.
-	"html://id-test": {
+	"html://string": {
 		`<html><div id="hello">Hello World</div></html>`,
 		&struct {
-			Hello string `farsight:"#hello"`
+			Text string `farsight:"#hello"`
 		}{},
 		&struct {
-			Hello string `farsight:"#hello"`
+			Text string `farsight:"#hello"`
 		}{
 			"Hello World",
+		},
+	},
+	"html://slice": {
+		`<body><ul id="g"><li>Hello</li><li>World</li></ul></body>`,
+		&struct {
+			List []string `farsight:"#g li"`
+		}{},
+		&struct {
+			List []string `farsight:"#g li"`
+		}{
+			[]string{"Hello", "World"},
 		},
 	},
 }
