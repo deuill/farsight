@@ -1,6 +1,6 @@
 # Farsight - Fetch, filter, and store arbitrary data
 
-[![API Documentation][godoc-svg]][godoc-url] [![MIT License][license-svg]][license-url]
+[![API Documentation][godoc-svg]][godoc-url] [![MIT License][license-svg]][license-url] [![Build Status][build-svg]][build-url]
 
 Farsight facilitates the fetching and transformation of data from arbitrary sources into pre-defined structures, which can be further processed and serialised into other formats (such as JSON, YAML etc.).
 
@@ -58,3 +58,6 @@ Farsight is licensed under the MIT license, the terms of which can be found in t
 
 [license-url]: https://github.com/deuill/farsight/blob/master/LICENSE
 [license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
+
+[build-url]: https://travis-ci.org/deuill/farsight
+[build-svg]: https://travis-ci.org/deuill/farsight.svg?branch=master
