@@ -1,5 +1,7 @@
 # Farsight - Fetch, filter, and store arbitrary data
 
+[![API Documentation][godoc-svg]][godoc-url] [![MIT License][license-svg]][license-url]
+
 Farsight facilitates the fetching and transformation of data from arbitrary sources into pre-defined structures, which can be further processed and serialised into other formats (such as JSON, YAML etc.).
 
 A large amount of inspiration comes from the [GoStruct](https://github.com/bfontaine/gostruct) project.
@@ -49,3 +51,10 @@ Data transformation is handled via `parser` types, that rely on specific struct 
 ## License
 
 Farsight is licensed under the MIT license, the terms of which can be found in the included LICENSE file.
+
+
+[godoc-url]: https://godoc.org/github.com/deuill/farsight
+[godoc-svg]: https://godoc.org/github.com/deuill/farsight?status.svg
+
+[license-url]: https://github.com/deuill/farsight/blob/master/LICENSE
+[license-svg]: https://img.shields.io/badge/license-MIT-blue.svg
