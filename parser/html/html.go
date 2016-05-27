@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strings"
 
 	// Internal packages.
 	"github.com/deuill/farsight/parser"
@@ -41,19 +42,48 @@ type HTMLDocument struct {
 // the provided CSS selector. On success, a new document is returned, containing
 // a list of all matched elements. An error is returned if the CSS selector is
 // malformed, or no elements were matched.
-func (h *HTMLDocument) Filter(attr string) (parser.Document, error) {
-	sel, err := cascadia.Compile(attr)
+func (h *HTMLDocument) Filter(sel string) (parser.Document, error) {
+	var attr string
+
+	// Parse optional attribute selector.
+	idx := strings.LastIndex(sel, "/")
+	if idx > 0 {
+		attr = sel[(idx + 1):]
+		sel = sel[:idx]
+	}
+
+	s, err := cascadia.Compile(sel)
 	if err != nil {
 		return nil, err
 	}
 
 	sub := &HTMLDocument{nodes: []*html.Node{}}
 	for _, n := range h.nodes {
-		sub.nodes = append(sub.nodes, sel.MatchAll(n)...)
+		sub.nodes = append(sub.nodes, s.MatchAll(n)...)
 	}
 
 	if len(sub.nodes) == 0 {
-		return nil, fmt.Errorf("Attribute '%s' matched no elements", attr)
+		return nil, fmt.Errorf("Selector '%s' matched no elements", sel)
+	}
+
+	// Loop through node attributes and attempt to match requested attribute.
+	// If a matching attribute key is matched, replace current node with a
+	// TextNode containing only the attribute value.
+	if attr != "" {
+		for i, n := range sub.nodes {
+			var found bool
+
+			for _, a := range n.Attr {
+				if a.Key == attr {
+					sub.nodes[i] = &html.Node{Type: html.TextNode, Data: a.Val}
+					found = true
+				}
+			}
+
+			if !found {
+				return nil, fmt.Errorf("Unable to find attribute '%s' for selector '%s'", attr, sel)
+			}
+		}
 	}
 
 	return sub, nil
@@ -96,7 +126,7 @@ func getNodeText(n *html.Node) string {
 			buf.WriteString(getNodeText(c))
 		}
 
-		return buf.String()
+		return strings.TrimSpace(buf.String())
 	}
 
 	return ""

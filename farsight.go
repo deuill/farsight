@@ -8,6 +8,8 @@ import (
 	// Standard library.
 	"fmt"
 	"reflect"
+	"regexp"
+	"strconv"
 
 	// Internal packages.
 	"github.com/deuill/farsight/parser"
@@ -16,6 +18,11 @@ import (
 	// Pre-defined sources and parsers.
 	_ "github.com/deuill/farsight/parser/html"
 	_ "github.com/deuill/farsight/source/http"
+)
+
+var (
+	regexpValidInt   = `[-+]?[0-9]+`
+	regexpValidFloat = `[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?`
 )
 
 // Fetch data from source pointed to by URI in `src`, and store to arbitrary
@@ -86,6 +93,36 @@ func setField(doc parser.Document, field reflect.Value) error {
 	switch field.Kind() {
 	case reflect.String:
 		field.SetString(val)
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if val == "" {
+			field.SetInt(0)
+		} else {
+			// Truncate string to valid integer.
+			val = regexp.MustCompile(regexpValidInt).FindString(val)
+
+			// Parse string and return integer value.
+			num, err := strconv.ParseInt(val, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			field.SetInt(num)
+		}
+	case reflect.Float32, reflect.Float64:
+		if val == "" {
+			field.SetFloat(0)
+		} else {
+			// Truncate string to valid floating point number.
+			val = regexp.MustCompile(regexpValidFloat).FindString(val)
+
+			// Parse string and return floating point value.
+			num, err := strconv.ParseFloat(val, 64)
+			if err != nil {
+				return err
+			}
+
+			field.SetFloat(num)
+		}
 	case reflect.Slice:
 		// Decompose document into list and prepare destination slice.
 		list := doc.List()
@@ -93,7 +130,7 @@ func setField(doc parser.Document, field reflect.Value) error {
 
 		for i, d := range list {
 			if err := setField(d, slice.Index(i)); err != nil {
-				return nil
+				return err
 			}
 		}
 
