@@ -11,15 +11,16 @@ import (
 	"strings"
 )
 
-type Source interface {
+// Fetcher is an interface that wraps the Fetch method.
+type Fetcher interface {
 	Fetch(src string) (io.Reader, error)
 }
 
 // A map of all registered sources.
-var sources map[string]Source
+var sources map[string]Fetcher
 
 // Register a source under a unique name.
-func Register(name string, rcvr Source) error {
+func Register(name string, rcvr Fetcher) error {
 	if _, exists := sources[name]; exists {
 		return fmt.Errorf("Source '%s' already registered, refusing to overwrite", name)
 	}
@@ -43,5 +44,5 @@ func Fetch(src string) (io.Reader, error) {
 }
 
 func init() {
-	sources = make(map[string]Source)
+	sources = make(map[string]Fetcher)
 }

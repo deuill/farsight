@@ -89,9 +89,9 @@ func (h *HTMLDocument) Filter(sel string) (parser.Document, error) {
 	return sub, nil
 }
 
-// List decomposes the target HTMLDocument into a slice of HTMLDocument types,
+// Slice decomposes the target HTMLDocument into a slice of HTMLDocument types,
 // each containing a single node from the parent's list of nodes.
-func (h *HTMLDocument) List() []parser.Document {
+func (h *HTMLDocument) Slice() []parser.Document {
 	var docs []parser.Document
 
 	for _, n := range h.nodes {

@@ -10,13 +10,15 @@ import (
 	"io"
 )
 
+// Parser is an interface that wraps the Parse method.
 type Parser interface {
 	Parse(io.Reader) (Document, error)
 }
 
+// Document is an interface that represents a generic, introspect-able document.
 type Document interface {
 	Filter(attr string) (Document, error)
-	List() []Document
+	Slice() []Document
 	String() string
 }
 

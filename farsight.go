@@ -125,10 +125,10 @@ func setField(doc parser.Document, field reflect.Value) error {
 		}
 	case reflect.Slice:
 		// Decompose document into list and prepare destination slice.
-		list := doc.List()
-		slice := reflect.MakeSlice(field.Type(), len(list), cap(list))
+		docs := doc.Slice()
+		slice := reflect.MakeSlice(field.Type(), len(docs), cap(docs))
 
-		for i, d := range list {
+		for i, d := range docs {
 			if err := setField(d, slice.Index(i)); err != nil {
 				return err
 			}
