@@ -47,6 +47,28 @@ var fetchTests = map[string]TestCase{
 			"Hello World",
 		},
 	},
+	"html://int": {
+		`<html><div id="numberwang">42</div></html>`,
+		&struct {
+			Num int64 `farsight:"#numberwang"`
+		}{},
+		&struct {
+			Num int64 `farsight:"#numberwang"`
+		}{
+			42,
+		},
+	},
+	"html://float": {
+		`<html><div id="pi">3.14159</div></html>`,
+		&struct {
+			Pi float64 `farsight:"#pi"`
+		}{},
+		&struct {
+			Pi float64 `farsight:"#pi"`
+		}{
+			3.14159,
+		},
+	},
 	"html://slice": {
 		`<body><ul id="g"><li>Hello</li><li>World</li></ul></body>`,
 		&struct {
@@ -56,6 +78,41 @@ var fetchTests = map[string]TestCase{
 			List []string `farsight:"#g li"`
 		}{
 			[]string{"Hello", "World"},
+		},
+	},
+	"html://attr": {
+		`<div><a href="http://deuill.org" target="_blank">Here!</a></div>`,
+		&struct {
+			Link string `farsight:"div a/href"`
+		}{},
+		&struct {
+			Link string `farsight:"div a/href"`
+		}{
+			"http://deuill.org",
+		},
+	},
+	"html://subdoc": {
+		`<ul><li><i>Eenie</i>Nope</li><li><i>Meenie</i>Nope Either</li></ul>`,
+		&struct {
+			Items []struct {
+				Text string `farsight:"i"`
+			} `farsight:"ul li"`
+		}{},
+		&struct {
+			Items []struct {
+				Text string `farsight:"i"`
+			} `farsight:"ul li"`
+		}{
+			[]struct {
+				Text string `farsight:"i"`
+			}{
+				struct {
+					Text string `farsight:"i"`
+				}{"Eenie"},
+				struct {
+					Text string `farsight:"i"`
+				}{"Meenie"},
+			},
 		},
 	},
 }
