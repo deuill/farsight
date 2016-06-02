@@ -35,9 +35,8 @@ func Register(name string, rcvr Parser) error {
 	return nil
 }
 
-// Read and parse document by calling the appropriate concrete parser for the kind
-// passed. Returns a parsed document, which can then be queried against, or an
-// error if parsing fails.
+// Parse calls the appropriate concrete parser for the kind passed. Returns a
+// parsed document, which can then be queried against, or an error if parsing fails.
 func Parse(kind string, src io.Reader) (Document, error) {
 	if _, exists := parsers[kind]; !exists {
 		return nil, fmt.Errorf("Parser for '%s' not found", kind)
