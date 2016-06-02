@@ -106,12 +106,9 @@ var fetchTests = map[string]TestCase{
 			[]struct {
 				Text string `farsight:"i"`
 			}{
-				struct {
-					Text string `farsight:"i"`
-				}{"Eenie"},
-				struct {
-					Text string `farsight:"i"`
-				}{"Meenie"},
+
+				{"Eenie"},
+				{"Meenie"},
 			},
 		},
 	},
